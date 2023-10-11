@@ -22,24 +22,10 @@ namespace espp {
 class Display {
 public:
   /**
-   * @brief Callback for lvgl to flush segments of pixel data from the pixel
-   *        buffers to the display.
-   * @param driver Pointer to display driver.
-   * @param area Pointer to structure describing the area of pixels to flush.
-   * @param color_data Pointer to pixel buffer containing color data.
-   */
-  typedef void (*flush_fn)(lv_disp_drv_t *driver, const lv_area_t *area, lv_color_t *color_data);
-
-  /**
    *  @brief Signals used by LVGL to let the post_transfer_callback know
    *         whether or not to call lv_disp_flush_ready.
    */
   enum class Signal : uint32_t { NONE, FLUSH };
-
-  /**
-   *  @brief Possible orientations of the display.
-   */
-  enum class Rotation : uint8_t { LANDSCAPE, PORTRAIT, LANDSCAPE_INVERTED, PORTRAIT_INVERTED };
 
   /**
    * @brief Used if you want the Display to manage the allocation / lifecycle
@@ -49,7 +35,6 @@ public:
     size_t width;             /**< Width of th display, in pixels. */
     size_t height;            /**< Height of the display, in pixels. */
     size_t pixel_buffer_size; /**< Size of the display buffer in pixels. */
-    flush_fn flush_callback;  /**< Function provided to LVGL for it to flush data to the display. */
     std::chrono::duration<float> update_period{
         0.01}; /**< How frequently to run the update function. */
     bool double_buffered{
@@ -57,9 +42,6 @@ public:
     uint32_t allocation_flags{
         MALLOC_CAP_8BIT |
         MALLOC_CAP_DMA}; /**< For configuring how the display buffer is allocated*/
-    Rotation rotation{Rotation::LANDSCAPE}; /**< Default / Initial rotation of the display. */
-    bool software_rotation_enabled{
-        true}; /**< Enable LVGL software display rotation, incurs additional overhead. */
     Logger::Verbosity log_level{Logger::Verbosity::WARN}; /**< Verbosity for the Display logger_. */
   };
 
@@ -74,12 +56,8 @@ public:
     size_t width;      /**< Width of th display, in pixels. */
     size_t height;     /**< Height of the display, in pixels. */
     size_t pixel_buffer_size; /**< Size of the display buffer in pixels. */
-    flush_fn flush_callback;  /**< Function provided to LVGL for it to flush data to the display. */
     std::chrono::duration<float> update_period{
         0.01};                              /**< How frequently to run the update function. */
-    Rotation rotation{Rotation::LANDSCAPE}; /**< Default / Initial rotation of the display. */
-    bool software_rotation_enabled{
-        true}; /**< Enable LVGL software display rotation, incurs additional overhead. */
     Logger::Verbosity log_level{Logger::Verbosity::WARN}; /**< Verbosity for the Display logger_. */
   };
 
@@ -102,7 +80,7 @@ public:
       assert(vram_1_ != NULL);
     }
     created_vram_ = true;
-    init(config.flush_callback, config.software_rotation_enabled, config.rotation);
+    init();
   }
 
   /**
@@ -116,7 +94,7 @@ public:
         vram_1_(config.vram1), update_period_(config.update_period),
         logger_({.tag = "Display", .level = config.log_level}) {
     logger_.debug("Initializing with non-allocating config!");
-    init(config.flush_callback, config.software_rotation_enabled, config.rotation);
+    init();
   }
 
   /**
@@ -202,23 +180,7 @@ protected:
    *        not.
    * @param rotation Default / initial rotation of the display.
    */
-  void init(flush_fn flush_callback, bool sw_rotation_enabled, Rotation rotation) {
-    lv_init();
-
-    // Configure the LVGL display buffer with our pixel buffers
-    lv_disp_draw_buf_init(&disp_buffer_, vram_0_, vram_1_, display_buffer_px_size_);
-
-    lv_disp_drv_init(&disp_driver_);
-    disp_driver_.draw_buf = &disp_buffer_;
-    disp_driver_.flush_cb = flush_callback;
-    disp_driver_.sw_rotate = (uint8_t)sw_rotation_enabled;
-    disp_driver_.ver_res = height_;
-    disp_driver_.hor_res = width_;
-    disp_driver_.rotated = (uint8_t)rotation;
-
-    // Register the display driver with lvgl
-    lv_disp_drv_register(&disp_driver_);
-
+  void init() {
     // Now start the task for the ui management
     using namespace std::placeholders;
     task_ = Task::make_unique({
@@ -267,8 +229,6 @@ protected:
   lv_color_t *vram_1_{nullptr};
   bool created_vram_{false};
   std::chrono::duration<float> update_period_;
-  lv_disp_draw_buf_t disp_buffer_;
-  lv_disp_drv_t disp_driver_;
   Logger logger_;
 };
 } // namespace espp
