@@ -6,6 +6,8 @@
 #include "sdkconfig.h"
 
 #include "task.hpp"
+#include "bsp_board.h"
+#include "bsp/esp-bsp.h"
 
 namespace espp {
 /**
@@ -124,13 +126,21 @@ public:
    * @brief Pause the display update task, to prevent LVGL from writing to the
    *        display.
    */
-  void pause() { paused_ = true; }
+  void pause() 
+  { 
+    paused_ = true;
+    bsp_display_lock(0);
+  }
 
   /**
    * @brief Resume the display update task, to allow LVGL to write to the
    *        display.
    */
-  void resume() { paused_ = false; }
+  void resume() 
+  { 
+    paused_ = false; 
+    bsp_display_unlock();  
+  }
 
   /**
    * @brief Force a redraw / refresh of the display.
@@ -201,21 +211,10 @@ protected:
    *   https://docs.lvgl.io/latest/en/html/porting/tick.html
    */
   bool update(std::mutex &m, std::condition_variable &cv) {
-    static auto prev = std::chrono::high_resolution_clock::now();
-    if (!paused_) {
-      auto now = std::chrono::high_resolution_clock::now();
-      int elapsed_ms = std::chrono::duration_cast<std::chrono::milliseconds>(now - prev).count();
-      // we shouldn't stop, update the display
-      lv_tick_inc(elapsed_ms);
-      // update previous timestamp
-      prev = now;
-    }
-    // delay
-    {
-      using namespace std::chrono_literals;
-      std::unique_lock<std::mutex> lk(m);
-      cv.wait_for(lk, update_period_);
-    }
+    using namespace std::chrono_literals;
+    std::unique_lock<std::mutex> lk(m);
+    cv.wait_for(lk, update_period_);
+
     // don't want to stop the task
     return false;
   }
