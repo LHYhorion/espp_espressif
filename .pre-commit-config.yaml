@@ -5,12 +5,6 @@ repos:
     -   id: clang-format
         exclude: |
           (?x)(
-          ^components/esp-dsp/|
-          ^components/esp_littlefs/|
-          ^components/state_machine/include/magic_enum.hpp|
-          ^external/alpaca/|
-          ^external/cli/|
-          ^external/csv2/|
           ^external/fmt/
           )
         types_or: [c++, c]

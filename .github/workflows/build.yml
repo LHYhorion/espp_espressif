@@ -11,83 +11,11 @@ jobs:
     strategy:
       matrix:
         test:
-        - path: 'components/adc/example'
-          target: esp32
-        - path: 'components/ads1x15/example'
-          target: esp32
-        - path: 'components/ads7138/example'
-          target: esp32s3
-        - path: 'components/as5600/example'
-          target: esp32s3
-        - path: 'components/aw9523/example'
-          target: esp32
-        - path: 'components/bldc_haptics/example'
-          target: esp32s3
-        - path: 'components/bldc_motor/example'
-          target: esp32s3
-        - path: 'components/button/example'
-          target: esp32
-        - path: 'components/controller/example'
-          target: esp32s3
-        - path: 'components/cli/example'
-          target: esp32
-        - path: 'components/color/example'
-          target: esp32
-        - path: 'components/csv/example'
-          target: esp32
-        - path: 'components/display_drivers/example'
-          target: esp32
-        - path: 'components/drv2605/example'
-          target: esp32
-        - path: 'components/encoder/example'
-          target: esp32
         - path: 'components/event_manager/example'
-          target: esp32
-        - path: 'components/file_system/example'
-          target: esp32
-        - path: 'components/filters/example'
-          target: esp32
-        - path: 'components/ftp/example'
-          target: esp32
-        - path: 'components/joystick/example'
-          target: esp32
-        - path: 'components/led/example'
-          target: esp32
-        - path: 'components/led_strip/example'
           target: esp32
         - path: 'components/logger/example'
           target: esp32
-        - path: 'components/math/example'
-          target: esp32
-        - path: 'components/monitor/example'
-          target: esp32
-        - path: 'components/mcp23x17/example'
-          target: esp32s3
-        - path: 'components/mt6701/example'
-          target: esp32s3
-        - path: 'components/pid/example'
-          target: esp32
-        - path: 'components/rmt/example'
-          target: esp32s3
-        - path: 'components/rtsp/example'
-          target: esp32
-        - path: 'components/serialization/example'
-          target: esp32
-        - path: 'components/socket/example'
-          target: esp32
-        - path: 'components/st25dv/example'
-          target: esp32s3
-        - path: 'components/state_machine/example'
-          target: esp32
-        - path: 'components/tabulate/example'
-          target: esp32
         - path: 'components/task/example'
-          target: esp32
-        - path: 'components/thermistor/example'
-          target: esp32
-        - path: 'components/timer/example'
-          target: esp32
-        - path: 'components/wifi/example'
           target: esp32
 
     steps:

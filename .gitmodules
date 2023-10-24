@@ -1,21 +1,3 @@
 [submodule "external/fmt"]
 	path = external/fmt
 	url = git@github.com:fmtlib/fmt
-[submodule "external/alpaca"]
-	path = external/alpaca
-	url = git@github.com:p-ranav/alpaca
-[submodule "components/esp_littlefs"]
-	path = components/esp_littlefs
-	url = git@github.com:joltwallet/esp_littlefs
-[submodule "components/esp-dsp"]
-	path = components/esp-dsp
-	url = git@github.com:espressif/esp-dsp
-[submodule "external/csv2"]
-	path = external/csv2
-	url = git@github.com:p-ranav/csv2
-[submodule "external/cli"]
-	path = external/cli
-	url = git@github.com:daniele77/cli
-[submodule "external/tabulate"]
-	path = external/tabulate
-	url = git@github.com:p-ranav/tabulate
